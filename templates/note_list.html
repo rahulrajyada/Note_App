@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  {% for note in notes %}
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+        <h1 class="card-title">
+          <a
+            href="{% url 'note_detail' note.id %}"
+            class="text-decoration-none fst-italic"
+            >{{ note.title }}</a
+          >
+        </h1>
+
+        <p>
+          <span class="badge bg-secondary text-uppercase"
+            >{{ note.category }}</span
+          >
+        </p>
+
+        <p class="card-text">
+          {{ note.content|truncatechars:30 }}
+          <a href="{% url 'note_detail' note.id %}">View more</a>
+        </p>
+      </div>
+      <div class="card-footer">
+        <a href="{% url 'note_update' note.id %}" class="btn btn-primary">Edit</a>
+        <a href="{% url 'note_delete' note.id %}" class="btn btn-danger">Delete</a>
+      </div>
+    </div>
+  </div>
+
+  {% endfor %}
+
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+        <a href="{% url 'note_create' %}" class="btn btn-success">Add</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

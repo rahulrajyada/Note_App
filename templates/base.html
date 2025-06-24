@@ -1,0 +1,100 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Note App</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid" bis_skin_checked="1">
+          <a class="navbar-brand" href="{% url 'note_list' %}">Note App</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarScroll"
+            aria-controls="navbarScroll"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div
+            class="collapse navbar-collapse"
+            id="navbarScroll"
+            bis_skin_checked="1"
+            method="get"
+          >
+            <ul
+              class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
+              style="--bs-scroll-height: 100px"
+              name="category"
+              onchange="this.form.submit()"
+            >
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Categories
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="{% url 'note_list' %}"
+                      >All Categories</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="{% url 'note_list' %}?category=work"
+                      >Work</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="{% url 'note_list' %}?category=personal"
+                      >Personal</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="{% url 'note_list' %}?category=study"
+                      >Study</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="{% url 'note_list' %}?category=other"
+                      >Other</a
+                    >
+                  </li>
+                </ul>
+              </li>
+            </ul>
+             <form class="d-flex" method="get" action="{% url 'note_search' %}">
+               <input class="form-control me-2" type="search" placeholder="Search" name="q" value="{{ request.GET.q }}">
+               <button class="btn btn-outline-success" type="submit">Search</button>
+             </form>
+          </div>
+        </div>
+      </nav>
+
+      {% block content %}
+      
+      {% endblock content %}
+      <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    </div>
+  </body>
+</html>

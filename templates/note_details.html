@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+   <div class="card-body border border-black">
+      <h1>
+          <a href="{% url 'note_detail' note.id %}" class="text-decoration-none fst-italic">
+              {{ note.title }}
+          </a>
+      </h1>
+     <hr>
+      <!-- Display category -->
+      <p>
+        <span class="badge bg-secondary text-uppercase">{{ note.category }}</span>
+      </p>
+
+      <p>
+          {{ note.content | linebreaksbr }}
+      </p>
+      <hr>
+      <div class="mt-2 my-2">
+          <a href="{% url 'note_update' note.pk %}" class="btn btn-primary">Edit</a>
+          <a href="{% url 'note_delete' note.id %}" class="btn btn-danger">Delete</a>
+      </div>
+      <hr>
+      <a href="{% url 'note_list' %}" class="btn btn-link mt-3">← Back to all posts</a>
+  </div>
+</div>
+
+{% endblock content %}

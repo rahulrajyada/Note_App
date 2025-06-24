@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Search Results for "{{ query }}"</h2>
+
+{% if notes %}
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  {% for note in notes %}
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">
+          <a href="{% url 'note_detail' note.id %}" class="text-decoration-none text-dark">
+            {{ note.title }}
+          </a>
+        </h5>
+
+        <p>
+          <span class="badge bg-secondary text-uppercase">{{ note.category|title }}</span>
+        </p>
+
+        <p class="card-text">{{ note.content|truncatechars:100 }}</p>
+      </div>
+      <div class="card-footer d-flex justify-content-between">
+        <a href="{% url 'note_update' note.id %}" class="btn btn-primary btn-sm">Edit</a>
+        <a href="{% url 'note_delete' note.id %}" class="btn btn-danger btn-sm">Delete</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-muted">No matching notes found.</p>
+{% endif %}
+
+<a href="{% url 'note_list' %}" class="btn btn-link mt-3">← Back to all notes</a>
+{% endblock %}
+

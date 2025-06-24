@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class = "card border border-dark-subtle">
+     <h2>Create a New Note</h2>
+
+     <form method="post">
+         {% csrf_token %}
+    
+          <div class="mb-3">
+              <label for="id_title" class="form-label">Title</label>
+             <input type="text" name="title" class="form-control" id="id_title" required value="{{ title|default:'' }}">
+          </div> 
+
+          <div class="mb-3">
+              <label for="id_content" class="form-label">Content</label>
+              <textarea name="content" class="form-control" id="id_content" rows="5" required>{{ content|default:'' }}</textarea>
+          </div>
+    
+           <!-- New category select -->
+          <nav class="navbar bg-body-tertiary">
+              <div class="container-fluid">
+                  <a href="{% url 'note_list' %}" class="navbar-brand">NOTES</a>
+
+                  <!-- Your search form here -->
+
+                  <!-- Category filters --> 
+                  <select name="category" class="form-select me-2" required>
+                     <option value="">Select Category</option>
+                      <option value="work" {% if category == "work" %}selected{% endif %}>Work</option>
+                     <option value="personal" {% if category == "personal" %}selected{% endif %}>Personal</option>
+                     <option value="study" {% if category == "study" %}selected{% endif %}>Study</option>
+                     <option value="other" {% if category == "other" %}selected{% endif %}>Other</option>
+                 </select>
+             </div>
+          </nav>
+    
+          <button type="submit" class="btn btn-primary">Save Note</button>
+          {% comment %} <a href="{% url 'note_delete' note.id %}" class="btn btn-danger text-decoration-none">Delete</a> {% endcomment %}
+     </form>
+
+      <a href="{% url 'note_list' %}" class="btn btn-secondary mt-3">Back to Notes</a>
+  </div>
+</div>
+{% endblock content %}
