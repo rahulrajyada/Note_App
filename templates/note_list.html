@@ -1,47 +1,48 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h2>
+  Notes
+  {% if category %}
+    — {{ category|title }}
+  {% endif %}
+</h2>
 
 <div class="row row-cols-1 row-cols-md-3 g-4">
   {% for note in notes %}
   <div class="col">
     <div class="card h-100">
+      
       <div class="card-body">
-        <h1 class="card-title">
-          <a
-            href="{% url 'note_detail' note.id %}"
-            class="text-decoration-none fst-italic"
-            >{{ note.title }}</a
-          >
-        </h1>
+        <h5 class="card-title">
+          <a href="{% url 'note_detail' note.id %}">{{ note.title }}</a>
+        </h5>
 
-        <p>
-          <span class="badge bg-secondary text-uppercase"
-            >{{ note.category }}</span
-          >
-        </p>
-
+        <!-- Preview + Read more -->
         <p class="card-text">
-          {{ note.content|truncatechars:30 }}
-          <a href="{% url 'note_detail' note.id %}">View more</a>
+          {{ note.content|truncatechars:150 }}
+          {% if note.content|length > 150 %}
+            <a href="{% url 'note_detail' note.id %}" class="ms-1">Read more →</a>
+            <noscript>
+              <a href="{% url 'note_detail' note.id %}" class="ms-1">Read more →</a>
+            </noscript>
+          {% endif %}
         </p>
       </div>
+
       <div class="card-footer">
-        <a href="{% url 'note_update' note.id %}" class="btn btn-primary">Edit</a>
-        <a href="{% url 'note_delete' note.id %}" class="btn btn-danger">Delete</a>
+        {% if user.is_authenticated and note.owner == user or user.is_staff %}
+          <a href="{% url 'note_update' note.id %}" class="btn btn-sm btn-primary">Edit</a>
+          <a href="{% url 'note_delete' note.id %}" class="btn btn-sm btn-danger">Delete</a>
+        {% endif %}
       </div>
+
     </div>
   </div>
 
+  {% empty %}
+  <p class="text-muted">No notes found.</p>
   {% endfor %}
-
-  <div class="col">
-    <div class="card h-100">
-      <div class="card-body">
-        <a href="{% url 'note_create' %}" class="btn btn-success">Add</a>
-      </div>
-    </div>
-  </div>
 </div>
 
-{% endblock content %}
+{% endblock %}

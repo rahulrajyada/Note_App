@@ -1,100 +1,140 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Note App</title>
+
+    <!-- Bootstrap CSS -->
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
   </head>
+
   <body>
     <div class="container">
-      <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid" bis_skin_checked="1">
+      <!-- NAVBAR -->
+      <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3">
+        <div class="container-fluid">
           <a class="navbar-brand" href="{% url 'note_list' %}">Note App</a>
+
+          <div class="ms-3 me-3">
+            <div class="dropdown d-inline">
+              <button
+                class="btn btn-outline-secondary dropdown-toggle"
+                type="button"
+                id="categoryDropdown"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Categories
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                {% for key, label in navbar_categories %}
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{% url 'notes_by_category' key %}"
+                    >{{ label }}</a
+                  >
+                </li>
+                {% empty %}
+                <li class="dropdown-item text-muted">No categories</li>
+                {% endfor %}
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'note_list' %}"
+                    >All notes</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+
           <button
             class="navbar-toggler"
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#navbarScroll"
-            aria-controls="navbarScroll"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
+            data-bs-target="#navbarSupportedContent"
           >
             <span class="navbar-toggler-icon"></span>
           </button>
-          <div
-            class="collapse navbar-collapse"
-            id="navbarScroll"
-            bis_skin_checked="1"
-            method="get"
-          >
-            <ul
-              class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
-              style="--bs-scroll-height: 100px"
-              name="category"
-              onchange="this.form.submit()"
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <!-- SEARCH FORM -->
+            <form
+              class="d-flex ms-auto"
+              method="get"
+              action="{% url 'note_search' %}"
             >
-              <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle"
-                  href="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Categories
-                </a>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a class="dropdown-item" href="{% url 'note_list' %}"
-                      >All Categories</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      class="dropdown-item"
-                      href="{% url 'note_list' %}?category=work"
-                      >Work</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      class="dropdown-item"
-                      href="{% url 'note_list' %}?category=personal"
-                      >Personal</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      class="dropdown-item"
-                      href="{% url 'note_list' %}?category=study"
-                      >Study</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      class="dropdown-item"
-                      href="{% url 'note_list' %}?category=other"
-                      >Other</a
-                    >
-                  </li>
-                </ul>
-              </li>
-            </ul>
-             <form class="d-flex" method="get" action="{% url 'note_search' %}">
-               <input class="form-control me-2" type="search" placeholder="Search" name="q" value="{{ request.GET.q }}">
-               <button class="btn btn-outline-success" type="submit">Search</button>
-             </form>
+              <input
+                class="form-control me-2"
+                type="search"
+                name="q"
+                placeholder="Search notes..."
+                value="{{ request.GET.q }}"
+              />
+              <button class="btn btn-outline-success" type="submit">
+                Search
+              </button>
+            </form>
+
+            <!-- AUTH BUTTONS -->
+            <div class="d-flex ms-3">
+              {% if user.is_authenticated %}
+              <a
+                class="btn btn-outline-primary me-2"
+                href="{% url 'note_create' %}"
+              >
+                Create Note
+              </a>
+
+              <span class="navbar-text me-2"> Hi, {{ user.username }} </span>
+
+              <form method="post" action="{% url 'logout' %}" class="d-inline">
+                {% csrf_token %}
+                <input
+                  type="hidden"
+                  name="next"
+                  value="{% url 'note_list' %}"
+                />
+                <button type="submit" class="btn btn-outline-danger">
+                  Logout
+                </button>
+              </form>
+
+              {% else %}
+              <a
+                class="btn btn-outline-primary"
+                href="{% url 'login' %}?next={% url 'note_list' %}"
+              >
+                Login
+              </a>
+              {% endif %}
+            </div>
           </div>
         </div>
       </nav>
 
-      {% block content %}
-      
-      {% endblock content %}
-      <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+      <!-- ALERT MESSAGES -->
+      {% if messages %} {% for msg in messages %}
+      <div
+        class="alert alert-{{ msg.tags }} alert-dismissible fade show"
+        role="alert"
+      >
+        {{ msg }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+      </div>
+      {% endfor %} {% endif %}
+
+      <!-- MAIN PAGE CONTENT -->
+      {% block content %}{% endblock %}
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
   </body>
 </html>

@@ -1,46 +1,55 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid">
-  <div class = "card border border-dark-subtle">
-     <h2>Create a New Note</h2>
+<div class="card p-3">
+  <h2>{% if note %}Edit Note{% else %}Create a New Note{% endif %}</h2>
 
-     <form method="post">
-         {% csrf_token %}
-    
-          <div class="mb-3">
-              <label for="id_title" class="form-label">Title</label>
-             <input type="text" name="title" class="form-control" id="id_title" required value="{{ title|default:'' }}">
-          </div> 
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
 
-          <div class="mb-3">
-              <label for="id_content" class="form-label">Content</label>
-              <textarea name="content" class="form-control" id="id_content" rows="5" required>{{ content|default:'' }}</textarea>
-          </div>
-    
-           <!-- New category select -->
-          <nav class="navbar bg-body-tertiary">
-              <div class="container-fluid">
-                  <a href="{% url 'note_list' %}" class="navbar-brand">NOTES</a>
+  <form method="post">
+    {% csrf_token %}
 
-                  <!-- Your search form here -->
+    <div class="mb-3">
+      <label for="id_title" class="form-label">Title</label>
+      {% if note %}
+        <input id="id_title" name="title" class="form-control" value="{{ note.title }}">
+      {% else %}
+        <input id="id_title" name="title" class="form-control" value="{{ title|default:'' }}">
+      {% endif %}
+    </div>
 
-                  <!-- Category filters --> 
-                  <select name="category" class="form-select me-2" required>
-                     <option value="">Select Category</option>
-                      <option value="work" {% if category == "work" %}selected{% endif %}>Work</option>
-                     <option value="personal" {% if category == "personal" %}selected{% endif %}>Personal</option>
-                     <option value="study" {% if category == "study" %}selected{% endif %}>Study</option>
-                     <option value="other" {% if category == "other" %}selected{% endif %}>Other</option>
-                 </select>
-             </div>
-          </nav>
-    
-          <button type="submit" class="btn btn-primary">Save Note</button>
-          {% comment %} <a href="{% url 'note_delete' note.id %}" class="btn btn-danger text-decoration-none">Delete</a> {% endcomment %}
-     </form>
+    <div class="mb-3">
+      <label for="id_content" class="form-label">Content</label>
+      {% if note %}
+        <textarea id="id_content" name="content" rows="8" class="form-control">{{ note.content }}</textarea>
+      {% else %}
+        <textarea id="id_content" name="content" rows="8" class="form-control">{{ content|default:'' }}</textarea>
+      {% endif %}
+    </div>
 
-      <a href="{% url 'note_list' %}" class="btn btn-secondary mt-3">Back to Notes</a>
-  </div>
+    <div class="mb-3">
+      <label for="id_category" class="form-label">Category</label>
+      {% if note %}
+        <select id="id_category" name="category" class="form-select">
+          <option value="work" {% if note.category == "work" %}selected{% endif %}>Work</option>
+          <option value="personal" {% if note.category == "personal" %}selected{% endif %}>Personal</option>
+          <option value="study" {% if note.category == "study" %}selected{% endif %}>Study</option>
+          <option value="other" {% if note.category == "other" %}selected{% endif %}>Other</option>
+        </select>
+      {% else %}
+        <select id="id_category" name="category" class="form-select">
+          <option value="work" {% if category == "work" %}selected{% endif %}>Work</option>
+          <option value="personal" {% if category == "personal" %}selected{% endif %}>Personal</option>
+          <option value="study" {% if category == "study" %}selected{% endif %}>Study</option>
+          <option value="other" {% if category == "other" or not category %}selected{% endif %}>Other</option>
+        </select>
+      {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-success">{% if note %}Save changes{% else %}Create{% endif %}</button>
+    <a class="btn btn-secondary" href="{% url 'note_list' %}">Cancel</a>
+  </form>
 </div>
-{% endblock content %}
+{% endblock %}

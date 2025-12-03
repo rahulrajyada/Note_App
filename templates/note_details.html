@@ -1,30 +1,52 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-   <div class="card-body border border-black">
-      <h1>
-          <a href="{% url 'note_detail' note.id %}" class="text-decoration-none fst-italic">
-              {{ note.title }}
-          </a>
-      </h1>
-     <hr>
-      <!-- Display category -->
-      <p>
-        <span class="badge bg-secondary text-uppercase">{{ note.category }}</span>
-      </p>
 
-      <p>
-          {{ note.content | linebreaksbr }}
-      </p>
-      <hr>
-      <div class="mt-2 my-2">
-          <a href="{% url 'note_update' note.pk %}" class="btn btn-primary">Edit</a>
-          <a href="{% url 'note_delete' note.id %}" class="btn btn-danger">Delete</a>
+<div class="card">
+  <div class="card-body">
+
+    <h3 class="mb-1">{{ note.title }}</h3>
+
+    <p class="text-muted mb-2">
+      Category: 
+      {% if note.get_category_display %}
+        {{ note.get_category_display }}
+      {% elif note.category and note.category.name %}
+        {{ note.category.name }}
+      {% endif %}
+      • Created: {{ note.created_at }}
+    </p>
+
+    <hr>
+
+    <div class="mb-3">
+      <p class="lead">{{ note.content|linebreaksbr }}</p>
+    </div>
+
+    {% if user.is_authenticated %}
+      {% if note.owner == user or user.is_staff %}
+      <div class="d-flex gap-2">
+        <a href="{% url 'note_update' note.id %}" class="btn btn-primary">Edit</a>
+
+        <!-- Delete as POST form (recommended) -->
+        <form method="post" action="{% url 'note_delete' note.id %}" onsubmit="return confirm('Delete this note? This action cannot be undone.');" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+
+        <a href="{% url 'note_list' %}" class="btn btn-outline-secondary ms-auto">Back to Home</a>
       </div>
-      <hr>
-      <a href="{% url 'note_list' %}" class="btn btn-link mt-3">← Back to all posts</a>
+      {% else %}
+      <div>
+        <a href="{% url 'note_list' %}" class="btn btn-outline-secondary">Back to Home</a>
+      </div>
+      {% endif %}
+    {% else %}
+      <div>
+        <a href="{% url 'note_list' %}" class="btn btn-outline-secondary">Back to Home</a>
+      </div>
+    {% endif %}
+
   </div>
 </div>
-
-{% endblock content %}
+{% endblock %}
